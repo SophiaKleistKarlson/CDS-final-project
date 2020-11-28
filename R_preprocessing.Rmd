@@ -183,22 +183,31 @@ image_names <- data.frame(matrix(ncol = 1, nrow = nrow(all_data)))
 image_names$image_path <- all_data$files.image.path %>%  str_replace_all('^/experiments/VY53sLXHyJ6H/0G5z021ZWZdA/', 'data/')
 #the paths look like this: /experiments/VY53sLXHyJ6H/0G5z021ZWZdA/0/0/cond_1_stim_1.png
 
-#take unique drawing ID names
+
+# take unique drawing ID names
 image_names$Drawing_ID <- all_data$Drawing_ID
 image_names[,1] <- NULL
 
+# make list of source image names as they are called on my computer
 source_names <- c("stim_1", "stim_2", "stim_3", "stim_4", "stim_5", "stim_6", "stim_7", "stim_8", "stim_9", "stim_10", "stim_11", "stim_12")
+
+# make list of drawing names from column 2 in image_names
 drawing_names <- image_names[,2]
 
+# bind them together to get one long list of the names of the source and output drawings (for mechanical turk)
 names <- c(drawing_names, source_names)
 
-#write csv files with ID's and image paths
+```
+
+
+Save data as csv-files
+```{r}
+# write csv files with ID's and image paths
 write.csv(names, "data/csv_files/all_drawing_names.csv")
 write.csv(image_names, "data/csv_files/Drawing_IDs.csv")
 
 # write csv with all the cleaned data
 write.csv(all_data, "data/csv_files/cleaned_data.csv")
-
 ```
 
 
