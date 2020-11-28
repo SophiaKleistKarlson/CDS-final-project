@@ -142,7 +142,7 @@ write.csv(completion_codes_2, "data/csv_files/completion_codes_2.csv") # complet
 
 
 
-Make extra rows for source images for each chain - we use all_data_2
+Make extra rows for source images for each chain, so they can function as generation 0 - we use all_data_2
 ```{r}
 
 all_data_2 <- read.csv("data/csv_files/data_w_complexity.csv")
