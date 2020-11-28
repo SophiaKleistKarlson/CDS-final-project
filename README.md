@@ -4,12 +4,12 @@ Code for my CDS final project
 
 Run the code in the following order:
 
-1: R_preprocessing_script
+1: R_preprocessing
 
 2: Image_preprocessing_script
 
-3: Complexity_preprocessing
+3: Preprocessing_complexity
 
-4: Conventionality_preprocessing
+4: Preprocessing_conventionality
 
 5: Plotting
