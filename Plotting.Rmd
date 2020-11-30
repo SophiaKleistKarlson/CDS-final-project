@@ -1,215 +1,97 @@
 ---
-title: "Code for CDS final project"
+title: "Code for CDS final project - plotting"
 author: "Sophia Kleist Karlson"
 date: "25 nov 2020"
 output: html_document
 ---
 
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-
+# load necesary packages through pacman
 pacman::p_load(tidyverse, stringr, dplyr, tidyr, ggplot2)
 
+# set working directory
 setwd("~/Social Transmission Study/Analysis of drawings/")
 
+# RStudio version
 RStudio.Version()
+
+# Load data
+data <- read.csv("data/csv_files/all_data_w_all_conv_source.csv")
+
 ```
 
 
+
+Checking the data 
+```{r}
+# check classes of the variables of interest
+class(data$Condition)
+class(data$Generation)
+class(data$Conventionality)
+class(data$Complexity)
+
+# change class for generation and condition to factor, and complexity and conventionality to numeric
+data$Condition <- as.factor(data$Condition)
+data$Generation <- as.factor(data$Generation)
+data$Conventionality <- as.numeric(data$Conventionality)
+data$Complexity <- as.numeric(data$Complexity)
+
+# check range, mean and sd of conventionality and complexity
+range(data$Conventionality) # 0-10
+mean(data$Conventionality) # 4.33
+sd(data$Conventionality) # 2.80
+
+range(data$Complexity) # 4287-50067
+mean(data$Complexity) # 24641.25
+sd(data$Complexity) # 6399.958
+```
+
+
+Plots 
+
+I chose to make barplots with the standard error as errorbars. Each plot shows the generation on the x-axis (from 0-7, 0 being the source images) and either the complexity or conventionality scores on the y-axis. For each generation, four bars represent each condition, color-coded as shown in the legend to the right of the plot.
 
 ```{r}
-class(df_conventionality$Condition)
-class(df_conventionality$Generation)
-class(df_conventionality$Conventionality)
 
-df_conventionality$Condition <- as.factor(df_conventionality$Condition)
-
-
-range(df_conventionality$Conventionality)
-mean(df_conventionality$Conventionality)#4.38
-sd(df_conventionality$Conventionality)#2.81
-
-# conditions and conventionality
-plot_simple_cond <- ggplot(df_conventionality, aes(Condition, Conventionality)) +
-                             #geom_smooth(method = lm)#
-  geom_jitter()#geom_bar(stat = "identity")
-plot_simple_cond
-
-# generation and conventionality
-plot_simple_gen <- ggplot(df_conventionality, aes(Generation, Conventionality)) +
-  geom_bar(stat = "identity")
-  #geom_smooth(method = lm)
-plot_simple_gen
-
-
-
-
-# generation, condition and conventionality
-class(df_conventionality$Condition)
-class(df_conventionality$Generation)
-class(df_conventionality$Conventionality)
-
-df_conventionality$Condition <- as.factor(df_conventionality$Condition)
-df_conventionality$Condition <- as.character(df_conventionality$Condition)
-df_conventionality$Condition <- as.numeric(df_conventionality$Condition)
-
-df_conventionality$Generation <- as.factor(df_conventionality$Generation)
-df_conventionality$Generation <- as.character(df_conventionality$Generation)
-df_conventionality$Generation <- as.numeric(df_conventionality$Generation)
-
-
-
-
-
-# make dataset for plots where sd for complexity and convenionality for each condition in each generation is made into a seperate row
-sd(all_data_w_all_conv_source$Conventionality)
-
-
-SD <- all_data_w_all_conv_source %>% group_by(Generation, Condition) %>% mutate(SD_compl = sd(Complexity), SD_conv = sd(Conventionality)) %>% select(Chain, Generation, Condition, Complexity, Conventionality, SD_compl, SD_conv)
-
-SD %>%
-    group_by(Generation, Condition) %>%
-    summarise(conv.mean = mean(Conventionality), conv.sd = sd(Conventionality)) %>%
-    ggplot(aes(Generation, conv.mean, fill = Condition)) +
-    geom_col(position = position_dodge(width = 0.8)) +
-    geom_errorbar(
-        aes(ymin = conv.mean - conv.sd, ymax = conv.mean + conv.sd),
-        position = position_dodge(width = 0.8),
-        width = 0.2)
-
-SD_chain <- SD %>% 
-    group_by(Generation, Condition, Chain) %>%
-    summarise(conv.mean = mean(Conventionality), conv.sd = sd(Conventionality), 
-              conv.se = sd(Conventionality)/sqrt(16), 
-              comp.mean = mean(Complexity), comp.sd = sd(Complexity), 
-              comp.se = sd(Complexity)/sqrt(16)) 
-
-
-SD_1 <- all_data_w_all_conv_source %>% 
-    group_by(Generation, Condition) %>%
-    summarise(conv.mean = mean(Conventionality), conv.sd = sd(Conventionality), 
-              conv.se = sd(Conventionality)/sqrt(320),
-              comp.mean = mean(Complexity), comp.sd = sd(Complexity), 
-              comp.se = sd(Complexity)/sqrt(320)) 
-
-
-ggplot(SD_chain, aes(Generation, conv.mean, fill = Condition)) +
-    geom_col(position = position_dodge(width = 0.8)) +
-    geom_errorbar(
-        aes(ymin = conv.mean - conv.se, ymax = conv.mean + conv.se),
-        position = position_dodge(width = 0.8),
-        width = 0.2) +
-    facet_wrap(SD_chain$Chain)
-
-ggplot(SD_1, aes(Generation, conv.mean, fill = Condition)) +
-    geom_col(position = position_dodge(width = 0.8)) +
-    geom_errorbar(
-        aes(ymin = conv.mean - conv.se, ymax = conv.mean + conv.se),
-        position = position_dodge(width = 0.8),
-        width = 0.2)
-
-
-ggplot(SD_chain, aes(Generation, comp.mean, fill = Condition)) +
-    geom_col(position = position_dodge(width = 0.8)) +
-    geom_errorbar(
-        aes(ymin = comp.mean - comp.se, ymax = comp.mean + comp.se),
-        position = position_dodge(width = 0.8),
-        width = 0.2) +
-    facet_wrap(SD_chain$Chain)
-
-ggplot(SD_1, aes(Generation, comp.mean, fill = Condition)) +
-    geom_col(position = position_dodge(width = 0.8)) +
-    geom_errorbar(
-        aes(ymin = comp.mean - comp.se, ymax = comp.mean + comp.se),
-        position = position_dodge(width = 0.8),
-        width = 0.2)
-
-
-plot_simple_gen_cond <- ggplot(SD, aes(Generation, Conventionality, fill = Condition)) +
+# plotting conventionality 
+conventionality_all <- ggplot(data, aes(Generation, Conventionality, fill = Condition)) +
   geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
   ggtitle("Evolution of conventionality") +
   stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge")
 
-plot_simple_gen_cond
+conventionality_all
 
 
-plot_simple_gen_cond_chain <- ggplot(df_conventionality, aes(Generation, Conventionality, fill = Condition)) +
-  geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
-  ggtitle("Evolution of conventionality") +
-  stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge") +
-  facet_wrap(df_conventionality$Chain)
-
-plot_simple_gen_cond_chain
-
-
-
-
-plot_simple_compl <- ggplot(SD, aes(Generation, Complexity, fill = Condition)) +
+# plotting complexity 
+complexity_all <- ggplot(data, aes(Generation, Complexity, fill = Condition)) +
   geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
   ggtitle("Evolution of complexity") +
   stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge")
 
-plot_simple_compl
+complexity_all
 
 
-
-plot_simple_compl_chain <- ggplot(all_data_w_all_conv_source, aes(Generation, Complexity, fill = Condition)) +
+# plotting each chain seperately - conventionality
+conventionality_chain <- ggplot(data, aes(Generation, Conventionality, fill = Condition)) +
   geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
-  ggtitle("Evolution of complexity") +
+  ggtitle("Evolution of conventionality across chains") +
   stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge") +
-  facet_wrap(all_data_w_all_conv_source$Chain)
+  facet_wrap(data$Chain)
 
-plot_simple_compl_chain
-
-
-
-# Error bars represent standard error of the mean
-ggplot(df_conventionality, aes(x=Generation, y=Conventionality, fill=Condition)) + 
-    geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=Conventionality-se, ymax=Conventionality+se),
-                  width=.2,                    # Width of the error bars
-                  position=position_dodge(.9))
-
-df_conventionality$Generation <- as.factor(df_conventionality$Generation)
+conventionality_chain
 
 
+# plotting each chain seperately - complexity
+complexity_chain <- ggplot(data, aes(Generation, Complexity, fill = Condition)) +
+  geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
+  ggtitle("Evolution of complexity across chains") +
+  stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge") +
+  facet_wrap(data$Chain)
 
-
-
-
-plot_simple_gen_cond1 <- ggplot(subset(df_conventionality, Condition == 1), aes(Generation, Conventionality)) +
-                             geom_col()#geom_bar(stat = "identity")
-  
-plot_simple_gen_cond1
-
-plot_simple_gen_cond2 <- ggplot(subset(df_conventionality, Condition == 2), aes(Generation, Conventionality)) +
-                             geom_bar(stat = "identity")
-plot_simple_gen_cond2
-
-plot_simple_gen_cond3 <- ggplot(subset(df_conventionality, Condition == 3), aes(Generation, Conventionality)) +
-                             geom_bar(stat = "identity")
-plot_simple_gen_cond3
-
-
-plot_simple_gen_cond4 <- ggplot(subset(df_conventionality, Condition == 4), aes(Generation, Conventionality)) +
-                             geom_bar(stat = "identity")
-plot_simple_gen_cond4
-
-
-
-
-# source image and conventionality
-plot_simple_gen_source <- ggplot(df_conventionality, aes(Source_image, Conventionality)) +
-  geom_bar(stat = "identity")# +
-  #geom_errorbar(aes(ymin=(Complexity-sd(Complexity)), ymax=(Complexity-sd(Complexity))), width=.2, position=position_dodge(.9))
-plot_simple_gen_source
-
-# participant and conventionality
-plot_simple_subj <- ggplot(df_conventionality, aes(Subject, Conventionality)) +
-                            geom_jitter()#geom_bar(stat = "identity")
-plot_simple_subj
+complexity_chain
 
 ```
+
