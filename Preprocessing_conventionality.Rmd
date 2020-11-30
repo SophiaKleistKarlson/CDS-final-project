@@ -13,12 +13,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-
+# load necesary packages through pacman
 pacman::p_load(tidyverse, jsonlite, rjson, stringr, dplyr)
 
+# set working directory
 setwd("~/Social Transmission Study/Analysis of drawings/")
 
-RStudio.Version() #why this?
+# RStudio version
+RStudio.Version()
 ```
 
 
