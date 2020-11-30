@@ -14,13 +14,15 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(echo = TRUE)
 
 
-pacman::p_load(tidyverse, jsonlite, rjson, stringr, dplyr)
+# load necesary packages through pacman
+pacman::p_load(tidyverse, stringr, dplyr)
 
+# set working directory
 setwd("~/Social Transmission Study/Analysis of drawings/")
 
-RStudio.Version() #why this?
+# RStudio version
+RStudio.Version()
 ```
-
 
 
 
@@ -29,6 +31,9 @@ NOW, THE PYTHON IMAGE PROCESSING SCRIPT IS RUN, WHICH CREATES THE COMPLEXITY_COM
 
 # comparing complexity of orignal and blurred images
 ```{r}
+# read the cleaned_data.csv that was made in the R_preprocessing script
+all_data <- read.csv("data/csv_files/cleaned_data.csv")
+all_data$X <- NULL
 
 # read complexity data and delete the first unnecessary column
 complexity_data <- read.csv("data/csv_files/complexity_comparison.csv")
