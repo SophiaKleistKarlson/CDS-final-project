@@ -28,7 +28,7 @@ BEFORE RUNNING THIS SCRIPT, RUN THE PYTHON IMAGE PROCESSING SCRIPT, WHICH CREATE
 Comparing complexity of orignal and blurred images
 ```{r}
 # read the cleaned_data.csv that was made in the R_preprocessing script
-all_data <- read.csv("data/csv_files/cleaned_data.csv")
+all_data <- read.csv("data/csv_files/cleaned_data_small.csv")
 all_data$X <- NULL
 
 # read complexity data and delete the first unnecessary column
@@ -82,9 +82,9 @@ all_conventionality$X <- NULL
 
 Make extra rows for source images for each chain, so they can function as generation 0 - we use all_data_2
 ```{r}
-# read data
-all_data_2 <- read.csv("data/csv_files/data_w_complexity.csv")
-all_data_2$X <- NULL
+# read data (if you have cleaned the environment after the last chunk)
+#all_data_2 <- read.csv("data/csv_files/data_w_complexity.csv")
+#all_data_2$X <- NULL
 
 # make new dataframe from all_data_2
 all_data_w_source <- all_data_2
@@ -92,8 +92,19 @@ all_data_w_source <- all_data_2
 # add 240 empty rows to be filled with source images in the beginning of each chain
 all_data_w_source[nrow(all_data_w_source)+240,] <- NA
 
-# check class of generation column
+
+# check classes and make them into numeric if necesarry
 class(all_data_w_source$Generation)
+class(all_data_w_source$Condition)
+class(all_data_w_source$Chain)
+class(all_data_w_source$Source_image)
+class(all_data_w_source$Complexity)
+
+all_data_w_source$Generation <- as.numeric(all_data_w_source$Generation)
+all_data_w_source$Condition <- as.numeric(all_data_w_source$Condition)
+all_data_w_source$Chain <- as.numeric(all_data_w_source$Chain)
+all_data_w_source$Source_image <- as.numeric(all_data_w_source$Source_image)
+
 
 # make every generation 1 higher
 all_data_w_source <- all_data_w_source %>% mutate(Generation = Generation +1)
@@ -110,81 +121,88 @@ source_comp$Generation <- rep(0,12)
 # add source image column, which is just the drawing id without "stim_"
 source_comp <- source_comp %>% mutate(Source_image = str_replace_all(Drawing_ID, 'stim_', ''))
 
-# make drawing id into character
+# make the source_image column numeric
+class(source_comp$Source_image)
+source_comp$Source_image <- as.numeric(source_comp$Source_image)
+
+# make drawing id into character for both datasets
 class(source_comp$Drawing_ID)
 source_comp$Drawing_ID <- as.character(source_comp$Drawing_ID)
+
+class(all_data_w_source$Drawing_ID)
+all_data_w_source$Drawing_ID <- as.character(all_data_w_source$Drawing_ID)
 
 
 # add columns from source_comp to all_data_w_source
 all_data_w_source[1681:1692,1] <- source_comp$Drawing_ID
-all_data_w_source[1681:1692,7] <- source_comp$Generation
-all_data_w_source[1681:1692,9] <- source_comp$Source_image
-all_data_w_source[1681:1692,15] <- source_comp$Complexity_original
-all_data_w_source[1681:1692,16] <- source_comp$Complexity_convolution
+all_data_w_source[1681:1692,4] <- source_comp$Generation
+all_data_w_source[1681:1692,6] <- source_comp$Source_image
+all_data_w_source[1681:1692,8] <- source_comp$Complexity_original
+all_data_w_source[1681:1692,10] <- source_comp$Complexity_convolution
 
-# add chain id
-all_data_w_source[1681:1692,6] <- rep(0,12)
+# add chain id (in this case we say that it's for chain 0)
+all_data_w_source[1681:1692,3] <- rep(0,12)
 
-# not very tidy, but it works
+# Now we take the next 12 rows and make them equal to the last 12 (that also contains source drawings). 
 all_data_w_source[1693:1704,] <- all_data_w_source[1681:1692,]
 
 # column 6 represents the chain id
-all_data_w_source[1693:1704,6] <- rep(12,12) # chain 12
+all_data_w_source[1693:1704,3] <- rep(12,12) # chain 12
 
-# do the same with the rest of the source image rows:
+# We do this to all new batches of generation 0 source image rows. Not very tidy, but it works
 all_data_w_source[1705:1716,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1705:1716,6] <- rep(13,12) # chain 13
+all_data_w_source[1705:1716,3] <- rep(13,12) # chain 13
 
 all_data_w_source[1717:1728,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1717:1728,6] <- rep(14,12) # chain 14
+all_data_w_source[1717:1728,3] <- rep(14,12) # chain 14
 
 all_data_w_source[1729:1740,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1729:1740,6] <- rep(15,12) # chain 15
+all_data_w_source[1729:1740,3] <- rep(15,12) # chain 15
                   
 all_data_w_source[1741:1752,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1741:1752,6] <- rep(16,12)
+all_data_w_source[1741:1752,3] <- rep(16,12)
 
 all_data_w_source[1753:1764,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1753:1764,6] <- rep(17,12)
+all_data_w_source[1753:1764,3] <- rep(17,12)
 
 all_data_w_source[1765:1776,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1765:1776,6] <- rep(18,12)
+all_data_w_source[1765:1776,3] <- rep(18,12)
 
 all_data_w_source[1777:1788,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1777:1788,6] <- rep(19,12)
+all_data_w_source[1777:1788,3] <- rep(19,12)
 
 all_data_w_source[1789:1800,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1789:1800,6] <- rep(2,12)
+all_data_w_source[1789:1800,3] <- rep(2,12)
 
 all_data_w_source[1801:1812,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1801:1812,6] <- rep(20,12)
+all_data_w_source[1801:1812,3] <- rep(20,12)
 
 all_data_w_source[1813:1824,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1813:1824,6] <- rep(21,12)
+all_data_w_source[1813:1824,3] <- rep(21,12)
 
 all_data_w_source[1825:1836,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1825:1836,6] <- rep(22,12)
+all_data_w_source[1825:1836,3] <- rep(22,12)
 
 all_data_w_source[1837:1848,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1837:1848,6] <- rep(23,12)
+all_data_w_source[1837:1848,3] <- rep(23,12)
 
 all_data_w_source[1849:1860,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1849:1860,6] <- rep(3,12)
+all_data_w_source[1849:1860,3] <- rep(3,12)
 
 all_data_w_source[1861:1872,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1861:1872,6] <- rep(4,12)
+all_data_w_source[1861:1872,3] <- rep(4,12)
 
 all_data_w_source[1873:1884,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1873:1884,6] <- rep(5,12)
+all_data_w_source[1873:1884,3] <- rep(5,12)
 
 all_data_w_source[1885:1896,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1885:1896,6] <- rep(7,12)
+all_data_w_source[1885:1896,3] <- rep(7,12)
 
 all_data_w_source[1897:1908,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1897:1908,6] <- rep(8,12)
+all_data_w_source[1897:1908,3] <- rep(8,12)
 
 all_data_w_source[1909:1920,] <- all_data_w_source[1681:1692,]
-all_data_w_source[1909:1920,6] <- rep(9,12)
+all_data_w_source[1909:1920,3] <- rep(9,12)
 
 
 # loop that inserts the correct subject ID, condition and source_image ID of the rest of the chain to each of the new generation 0 rows
@@ -192,13 +210,13 @@ for (i in 1:1920){ # i represents all the rows in the dataframe
   for (c in 0:23){ # c represents each of the 20 chains (their ID's goes from 0-23 because of missing chains)
     for (s in 1:12){ # s represents each of the 12 source images
       
-      # below: if row i of column 6 (Chain) is equal to c, and row i of column 7 (generation) is 0 and column 9 (source image) is s
-      if (all_data_w_source[i, 6] == c & all_data_w_source[i, 7] == 0 & all_data_w_source[i, 9] == s){
+      # below: if row i of column 3 (Chain) is equal to c, and row i of column 4 (generation) is 0 and column 6 (source image) is s
+      if (all_data_w_source[i, 3] == c & all_data_w_source[i, 4] == 0 & all_data_w_source[i, 6] == s){
         
-        # below: then take make the condition of row i the same as the condition of row j and the same with subject ID (column 2)
+        # below: then take make the condition of row i (column 5) the same as the condition of row j and the same with subject ID (column 2)
         for (j in 1:1920){ # j represents the same row as i but exactly one generation above it
-          if (all_data_w_source[j, 6] == c & all_data_w_source[j, 7] == 1 & all_data_w_source[j, 9] == s){
-            all_data_w_source[i, 8] <- all_data_w_source[j, 8]
+          if (all_data_w_source[j, 3] == c & all_data_w_source[j, 4] == 1 & all_data_w_source[j, 6] == s){
+            all_data_w_source[i, 5] <- all_data_w_source[j, 5]
             all_data_w_source[i, 2] <- all_data_w_source[j, 2]
           }
         }
@@ -229,47 +247,46 @@ I chose to make barplots with the standard error as errorbars. Each plot shows t
 
 ```{r}
 
-# Load data
-plotting_data <- read.csv("data/csv_files/all_data_w_all_conv_source.csv")
+# Read data into R if you have cleaned the environment
+#all_data_w_all_conv_source <- read.csv("data/csv_files/all_data_w_all_conv_source.csv")
 
 # check classes of the variables of interest
-class(plotting_data$Condition)
-class(plotting_data$Generation)
-class(plotting_data$Conventionality)
-class(plotting_data$Complexity)
+class(all_data_w_all_conv_source$Condition)
+class(all_data_w_all_conv_source$Generation)
+class(all_data_w_all_conv_source$Conventionality)
+class(all_data_w_all_conv_source$Complexity)
 
 # change class for generation and condition to factor, and complexity and conventionality to numeric
-plotting_data$Condition <- as.factor(plotting_data$Condition)
-plotting_data$Generation <- as.factor(plotting_data$Generation)
-plotting_data$Conventionality <- as.numeric(plotting_data$Conventionality)
-plotting_data$Complexity <- as.numeric(plotting_data$Complexity)
+all_data_w_all_conv_source$Condition <- as.factor(all_data_w_all_conv_source$Condition)
+all_data_w_all_conv_source$Generation <- as.factor(all_data_w_all_conv_source$Generation)
+all_data_w_all_conv_source$Conventionality <- as.numeric(all_data_w_all_conv_source$Conventionality)
+all_data_w_all_conv_source$Complexity <- as.numeric(all_data_w_all_conv_source$Complexity)
 
 # check range, mean and sd of conventionality and complexity
-range(plotting_data$Conventionality) # 0-10
-mean(plotting_data$Conventionality) # 4.33
-sd(plotting_data$Conventionality) # 2.80
+range(all_data_w_all_conv_source$Conventionality) # 0-10
+mean(all_data_w_all_conv_source$Conventionality) # 4.33
+sd(all_data_w_all_conv_source$Conventionality) # 2.80
 
-range(plotting_data$Complexity) # 4287-50067
-mean(plotting_data$Complexity) # 24641.25
-sd(plotting_data$Complexity) # 6399.958
-
-
-# plotting conventionality 
-conventionality_plot <- ggplot(plotting_data, aes(Generation, Conventionality, fill = Condition)) +
-  geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
-  ggtitle("Development of conventionality") +
-  stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge")
-
-conventionality_plot
+range(all_data_w_all_conv_source$Complexity) # 4287-50067
+mean(all_data_w_all_conv_source$Complexity) # 24641.25
+sd(all_data_w_all_conv_source$Complexity) # 6399.96
 
 
 # plotting complexity 
-complexity_plot <- ggplot(plotting_data, aes(Generation, Complexity, fill = Condition)) +
+complexity_plot <- ggplot(all_data_w_all_conv_source, aes(Generation, Complexity, fill = Condition)) +
   geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
   ggtitle("Development of complexity") +
   stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge")
 
 complexity_plot
+
+# plotting conventionality 
+conventionality_plot <- ggplot(all_data_w_all_conv_source, aes(Generation, Conventionality, fill = Condition)) +
+  geom_bar(fun.y = "mean", stat = "summary", position = "dodge") +
+  ggtitle("Development of conventionality") +
+  stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge")
+
+conventionality_plot
 
 ```
 
