@@ -10,7 +10,7 @@ Please run the code in the following order:
 
 
 ### Data metadata 
-Written in the format "column name": "description".
+Written in the format "column name": "description". If a column name appears in more than one CSV-file, the two describe the same variable.
 
 Subject: Anonymized participant identifier, unique to each participant.
 
