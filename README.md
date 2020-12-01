@@ -16,7 +16,7 @@ Subject: Anonymized participant identifier, unique to each participant.
 
 Chain: Chain ID. Note that 25 chains were started, but chains 1, 6, 10, 11 and 24 were excluded due to missing data. This means that there are 20 chain ID's present in this dataset with ID's ranging 0-23.
 
-Generation: Generation ID. Note that in the file cleaned_data.csv, generation ranges from 0-6, whereas it ranges from 0-7 in the final dataset, as all generations were pushed one up to make the source images the new "generation 0" for each chain. 
+Generation: Generation ID. Note that in the file cleaned_data_small.csv, generation ranges from 0-6, whereas it ranges from 0-7 in the final dataset, as all generations were pushed one up to make the source images the new "generation 0" for each chain. 
 
 Condition: The condition (1-4) that the drawing of that row was a assigned.
 
