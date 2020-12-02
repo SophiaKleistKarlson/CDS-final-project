@@ -4,13 +4,17 @@ Code for my CDS final project
 
 Please run the code in the following order:
 
-1. Image_preprocessing_script
+1. Download the data (the ZIP-file, three CSV-files and folder with source drawings).
 
-2. R_preprocessing_and_plotting
+2. Run Image_preprocessing_script in your browser (in Google Colaboratory).
+
+3. Download R_preprocessing_and_plotting and run it locally on your computer (in RStudio).
+
+NB: Remember to change the working directory and pathds to the CSV's where necessary to fit your own folder structure.
 
 
 ### Data metadata 
-Written in the format "column name": "description". If a column name appears in more than one CSV-file, the two describe the same variable.
+Written in the format "column name": "description". If a column name appears in more than one CSV-file, they describe the same variable.
 
 Subject: Anonymized participant identifier, unique to each participant.
 
