@@ -25,7 +25,7 @@ BEFORE RUNNING THIS SCRIPT, RUN THE PYTHON IMAGE PROCESSING SCRIPT, WHICH CREATE
 
 
 
-Comparing complexity of orignal and blurred images
+Compare complexity of orignal and blurred images
 ```{r}
 # read the cleaned_data.csv that was made in the R_preprocessing script
 all_data <- read.csv("data/csv_files/cleaned_data_small.csv")
@@ -72,7 +72,7 @@ write.csv(all_data_2, "data/csv_files/data_w_complexity.csv")
 
 
 
-Read conventionality scores from all_conventionality.csv
+Get conventionality scores from all_conventionality.csv
 ```{r}
 all_conventionality <- read.csv("data/csv_files/all_conventionality.csv")
 all_conventionality$X <- NULL
@@ -80,7 +80,7 @@ all_conventionality$X <- NULL
 
 
 
-Make extra rows for source images for each chain, so they can function as generation 0 - we use all_data_2
+Make extra rows for source images for each chain, so they can function as generation 0 - we use all_data_2 (which has conventionality scores)
 ```{r}
 # read data (if you have cleaned the environment after the last chunk)
 #all_data_2 <- read.csv("data/csv_files/data_w_complexity.csv")
@@ -240,10 +240,9 @@ write.csv(all_data_w_all_conv_source, "data/csv_files/all_data_w_all_conv_source
 
 
 
-
 Plotting 
 
-I chose to make barplots with the standard error as errorbars. Each plot shows the generation on the x-axis (from 0-7, 0 being the source images) and either the complexity or conventionality scores on the y-axis. For each generation, four bars represent each condition, color-coded as shown in the legend to the right of the plot.
+I chose to make two barplots with the standard error as errorbars. Each plot shows the generation on the x-axis (from 0-7, 0 being the source images) and either the complexity or conventionality scores on the y-axis. For each generation, four bars represent each condition, color-coded as shown in the legend to the right of the plot.
 
 ```{r}
 
