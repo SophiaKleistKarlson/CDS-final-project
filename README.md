@@ -1,5 +1,5 @@
-# CDS-final-project
-Code for my CDS final project
+# Introduction to Cultural Data Science - final project
+Code and data for my CDS final project
 
 
 Please run the code in the following order:
